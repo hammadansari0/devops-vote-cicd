@@ -8,29 +8,29 @@
     state: present
     update_cache: yes
 
-- name: Add Kubernetes GPG key
-  ansible.builtin.get_url:
+- name: Add Kubernetes apt signing key
+  apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    dest: /usr/share/keyrings/kubernetes-archive-keyring.gpg
-    mode: '0644'
-
-- name: Add Kubernetes repository
-  ansible.builtin.apt_repository:
-    repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
     state: present
-    filename: kubernetes
 
-- name: Update apt cache after adding Kubernetes repo
+- name: Add Kubernetes apt repository
+  apt_repository:
+    repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+    filename: kubernetes.list
+
+- name: Update apt cache
   apt:
     update_cache: yes
 
-- name: Install Kubernetes components
+- name: Install Kubernetes packages
   apt:
     name:
       - kubelet
       - kubeadm
       - kubectl
     state: present
+    update_cache: yes
 
 - name: Hold Kubernetes packages
   apt:
@@ -39,6 +39,13 @@
       - kubeadm
       - kubectl
     state: present
-    allow_downgrade: yes
-    update_cache: yes
     mark: hold
+
+- name: Disable swap permanently
+  replace:
+    path: /etc/fstab
+    regexp: '^.*swap.*$'
+    replace: ''
+
+- name: Disable swap immediately
+  command: swapoff -a
