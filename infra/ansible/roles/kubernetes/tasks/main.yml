@@ -9,17 +9,17 @@
     update_cache: yes
 
 - name: Add Kubernetes GPG key
-  shell: |
-    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/kubernetes-archive-keyring.gpg
-  args:
-    creates: /usr/share/keyrings/kubernetes-archive-keyring.gpg
+  ansible.builtin.get_url:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    dest: /usr/share/keyrings/kubernetes-archive-keyring.gpg
+    mode: '0644'
 
-- name: Add Kubernetes repository
+- name: Add Kubernetes APT repository
   copy:
     dest: /etc/apt/sources.list.d/kubernetes.list
-    content: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-$(lsb_release -cs) main"
+    content: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
 
-- name: Update apt cache after adding repo
+- name: Update apt cache after adding Kubernetes repo
   apt:
     update_cache: yes
 
@@ -32,13 +32,12 @@
     state: present
 
 - name: Hold Kubernetes packages
-  shell: apt-mark hold kubelet kubeadm kubectl
-
-- name: Disable swap permanently
-  replace:
-    path: /etc/fstab
-    regexp: '^.*swap.*$'
-    replace: ''
-
-- name: Disable swap immediately
-  command: swapoff -a
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: present
+    allow_downgrade: yes
+    update_cache: yes
+    mark: hold
