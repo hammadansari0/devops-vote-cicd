@@ -1,3 +1,8 @@
+- name: Remove old Kubernetes repository (if exists)
+  file:
+    path: /etc/apt/sources.list.d/kubernetes.list
+    state: absent
+
 - name: Ensure keyrings directory exists
   file:
     path: /etc/apt/keyrings
