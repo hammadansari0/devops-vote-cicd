@@ -1,7 +1,6 @@
 - hosts: all
   become: true
   roles:
-    - common
     - docker
     - kubernetes
 
@@ -9,9 +8,9 @@
   become: true
   roles:
     - master
-    - jenkins
     - helm
     - monitoring
+    - jenkins
 
 - hosts: k8s_workers
   become: true
