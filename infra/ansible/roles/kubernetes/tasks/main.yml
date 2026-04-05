@@ -8,16 +8,17 @@
     state: present
     update_cache: yes
 
-- name: Add Kubernetes apt signing key
+- name: Add Kubernetes GPG key
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
     state: present
 
-- name: Add Kubernetes apt repository
+- name: Add Kubernetes repository
   apt_repository:
     repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
     state: present
     filename: kubernetes.list
+    trusted: yes
 
 - name: Update apt cache
   apt:
