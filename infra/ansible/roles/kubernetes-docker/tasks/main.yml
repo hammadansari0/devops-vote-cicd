@@ -1,0 +1,18 @@
+- name: Install k3s (Lightweight Kubernetes)
+  shell: |
+    curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION="v1.28.1+k3s1" sh -
+  args:
+    creates: /usr/local/bin/k3s
+
+- name: Ensure kubeconfig exists
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /home/ubuntu/.kube/config
+    remote_src: yes
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+  ignore_errors: yes
+
+- name: Disable swap (required for Kubernetes)
+  command: swapoff -a

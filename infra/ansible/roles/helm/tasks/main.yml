@@ -1,3 +1,8 @@
+- name: Wait for k3s nodes to be ready
+  shell: kubectl wait --for=condition=Ready nodes --all --timeout=120s
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
 - name: Install Helm
   shell: |
     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
@@ -11,14 +16,13 @@
   shell: helm repo add bitnami https://charts.bitnami.com/bitnami
   register: bitnami_repo
   changed_when: "'already exists' not in bitnami_repo.stderr"
-
-# - name: Add Prometheus repo
-#   shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-#   register: prom_repo
-#   changed_when: "'already exists' not in prom_repo.stderr"
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
 - name: Update Helm repos
   shell: helm repo update
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
 # -----------------------------
 # Copy Postgres Values File
@@ -30,7 +34,7 @@
     mode: '0644'
 
 # -----------------------------
-# Install PostgreSQL (Helm)
+# Install PostgreSQL via Helm
 # -----------------------------
 - name: Install PostgreSQL via Helm
   shell: |
@@ -38,7 +42,7 @@
     -f /home/ubuntu/postgres-values.yaml \
     --namespace default
   environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
   args:
     creates: /home/ubuntu/.postgres_installed
 

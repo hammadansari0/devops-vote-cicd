@@ -23,10 +23,10 @@
     state: started
     enabled: true
 
-# 🔥 Allow Jenkins to use kubectl
-- name: Copy kubeconfig to Jenkins
+# 🔥 Allow Jenkins to use kubectl (k3s)
+- name: Copy k3s kubeconfig to Jenkins
   copy:
-    src: /etc/kubernetes/admin.conf
+    src: /etc/rancher/k3s/k3s.yaml
     dest: /var/lib/jenkins/.kube/config
     remote_src: yes
     owner: jenkins

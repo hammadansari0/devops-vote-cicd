@@ -1,31 +1,24 @@
-- name: Initialize Kubernetes cluster
-  shell: kubeadm init --pod-network-cidr=192.168.0.0/16
-  args:
-    creates: /etc/kubernetes/admin.conf
-  register: kubeadm_init
+- name: Initialize k3s master (already done by install script)
+  debug:
+    msg: "k3s master installed and running."
 
-- name: Create .kube directory
-  file:
-    path: /home/ubuntu/.kube
-    state: directory
-    owner: ubuntu
-    group: ubuntu
-
-- name: Copy kubeconfig
-  copy:
-    src: /etc/kubernetes/admin.conf
-    dest: /home/ubuntu/.kube/config
-    remote_src: yes
-    owner: ubuntu
-    group: ubuntu
-
-- name: Install Calico network
+- name: Install Calico network (optional with k3s)
   shell: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  args:
+    creates: /home/ubuntu/.calico_installed
 
-- name: Get join command
-  shell: kubeadm token create --print-join-command
-  register: join_command
+- name: Mark Calico installed
+  file:
+    path: /home/ubuntu/.calico_installed
+    state: touch
 
-- name: Set join command fact
+- name: Save join token for workers
+  shell: k3s token create
+  register: k3s_token
+  changed_when: false
+
+- name: Set k3s join token fact
   set_fact:
-    kubeadm_join_cmd: "{{ join_command.stdout }}"
+    k3s_join_token: "{{ k3s_token.stdout }}"

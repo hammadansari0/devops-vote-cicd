@@ -1,9 +1,14 @@
+- name: Wait for k3s nodes to be ready
+  shell: kubectl wait --for=condition=Ready nodes --all --timeout=120s
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
 - name: Install Prometheus + Grafana
   shell: |
     helm install monitoring prometheus-community/kube-prometheus-stack \
     --namespace monitoring --create-namespace
   environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
   args:
     creates: /home/ubuntu/.monitoring_installed
 

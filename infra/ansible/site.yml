@@ -1,13 +1,13 @@
 - hosts: all
   become: true
   roles:
-    - kubernetes
     - docker
+    - kubernetes-docker
 
 - hosts: k8s_master
   become: true
   environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
   roles:
     - master
     - helm
