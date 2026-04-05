@@ -1,8 +1,8 @@
 - hosts: all
   become: true
   roles:
-    - docker
     - kubernetes
+    - docker
 
 - hosts: k8s_master
   become: true
