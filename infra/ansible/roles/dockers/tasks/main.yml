@@ -4,8 +4,21 @@
     state: present
     update_cache: yes
 
-- name: Enable Docker
+- name: Start Docker
   service:
     name: docker
     state: started
     enabled: true
+
+- name: Add ubuntu user to docker group
+  user:
+    name: ubuntu
+    groups: docker
+    append: yes
+
+- name: Add jenkins user to docker group
+  user:
+    name: jenkins
+    groups: docker
+    append: yes
+  ignore_errors: yes

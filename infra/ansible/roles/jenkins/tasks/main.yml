@@ -2,11 +2,15 @@
   apt:
     name: openjdk-11-jdk
     state: present
+    update_cache: yes
+
+- name: Add Jenkins key
+  shell: wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
 
 - name: Add Jenkins repo
-  shell: |
-    wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
-    echo "deb https://pkg.jenkins.io/debian-stable binary/" > /etc/apt/sources.list.d/jenkins.list
+  copy:
+    dest: /etc/apt/sources.list.d/jenkins.list
+    content: "deb https://pkg.jenkins.io/debian-stable binary/"
 
 - name: Install Jenkins
   apt:
@@ -18,3 +22,14 @@
     name: jenkins
     state: started
     enabled: true
+
+# 🔥 Allow Jenkins to use kubectl
+- name: Copy kubeconfig to Jenkins
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /var/lib/jenkins/.kube/config
+    remote_src: yes
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+  ignore_errors: yes

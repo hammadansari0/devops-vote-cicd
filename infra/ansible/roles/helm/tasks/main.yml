@@ -1,3 +1,48 @@
 - name: Install Helm
   shell: |
     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+  args:
+    creates: /usr/local/bin/helm
+
+# -----------------------------
+# Add Helm Repositories
+# -----------------------------
+- name: Add Bitnami repo (Postgres)
+  shell: helm repo add bitnami https://charts.bitnami.com/bitnami
+  register: bitnami_repo
+  changed_when: "'already exists' not in bitnami_repo.stderr"
+
+# - name: Add Prometheus repo
+#   shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+#   register: prom_repo
+#   changed_when: "'already exists' not in prom_repo.stderr"
+
+- name: Update Helm repos
+  shell: helm repo update
+
+# -----------------------------
+# Copy Postgres Values File
+# -----------------------------
+- name: Copy postgres values.yaml
+  copy:
+    src: postgres-values.yaml
+    dest: /home/ubuntu/postgres-values.yaml
+    mode: '0644'
+
+# -----------------------------
+# Install PostgreSQL (Helm)
+# -----------------------------
+- name: Install PostgreSQL via Helm
+  shell: |
+    helm install postgres bitnami/postgresql \
+    -f /home/ubuntu/postgres-values.yaml \
+    --namespace default
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  args:
+    creates: /home/ubuntu/.postgres_installed
+
+- name: Mark postgres installed
+  file:
+    path: /home/ubuntu/.postgres_installed
+    state: touch

@@ -1,19 +1,16 @@
-provider "virtualbox" {}
+resource "null_resource" "vagrant_up" {
+  provisioner "local-exec" {
+    command = "vagrant up"
+  }
 
-variable "vm_count" {
-  default = 3
 }
 
-resource "virtualbox_vm" "k8s_nodes" {
-  count  = var.vm_count
-  name   = "k8s-node-${count.index}"
-  image  = "https://app.vagrantup.com/ubuntu/boxes/focal64/versions/20230801.0.0/providers/virtualbox.box"
-
-  cpus   = 2
-  memory = "2048 mib"
-
-  network_adapter {
-    type           = "hostonly"
-    host_interface = "vboxnet0"
+# ---------------------------
+# Trigger Vagrant Destroy
+# ---------------------------
+resource "null_resource" "vagrant_destroy" {
+  provisioner "local-exec" {
+    when    = destroy
+    command = "vagrant destroy -f"
   }
 }
