@@ -1,24 +1,31 @@
+- name: Ensure keyrings directory exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
 - name: Install dependencies
   apt:
     name:
       - apt-transport-https
+      - ca-certificates
       - curl
       - gnupg
       - lsb-release
     state: present
     update_cache: yes
 
-- name: Add Kubernetes GPG key
-  apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present
+- name: Add Kubernetes signing key (pkgs.k8s.io)
+  ansible.builtin.get_url:
+    url: https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key
+    dest: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    mode: '0644'
 
-- name: Add Kubernetes repository
-  apt_repository:
-    repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+- name: Add Kubernetes apt repository (pkgs.k8s.io)
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /"
     state: present
     filename: kubernetes.list
-    trusted: yes
 
 - name: Update apt cache
   apt:
@@ -27,13 +34,12 @@
 - name: Install Kubernetes packages
   apt:
     name:
-      - kubelet
-      - kubeadm
-      - kubectl
+      - kubelet=1.28.1-1.1
+      - kubeadm=1.28.1-1.1
+      - kubectl=1.28.1-1.1
     state: present
-    update_cache: yes
 
-- name: Hold Kubernetes packages
+- name: Hold Kubernetes packages to prevent automatic upgrade
   apt:
     name:
       - kubelet
