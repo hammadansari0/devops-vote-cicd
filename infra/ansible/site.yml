@@ -6,6 +6,8 @@
 
 - hosts: k8s_master
   become: true
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
   roles:
     - master
     - helm

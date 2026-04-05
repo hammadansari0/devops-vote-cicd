@@ -19,16 +19,9 @@
     owner: ubuntu
     group: ubuntu
 
-- name: Set KUBECONFIG for root
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-
 - name: Install Calico network
   shell: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
 
-# 🔥 IMPORTANT: Generate join command
 - name: Get join command
   shell: kubeadm token create --print-join-command
   register: join_command
