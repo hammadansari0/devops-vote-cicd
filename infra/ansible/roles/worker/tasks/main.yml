@@ -1,0 +1,2 @@
+- name: Join cluster
+  shell: "{{ hostvars['k8s_master'][0]['kubeadm_join_cmd'] }}"

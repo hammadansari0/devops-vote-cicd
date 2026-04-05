@@ -1,0 +1,20 @@
+- name: Install Java
+  apt:
+    name: openjdk-11-jdk
+    state: present
+
+- name: Add Jenkins repo
+  shell: |
+    wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
+    echo "deb https://pkg.jenkins.io/debian-stable binary/" > /etc/apt/sources.list.d/jenkins.list
+
+- name: Install Jenkins
+  apt:
+    name: jenkins
+    update_cache: yes
+
+- name: Start Jenkins
+  service:
+    name: jenkins
+    state: started
+    enabled: true
