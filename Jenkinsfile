@@ -63,14 +63,23 @@ pipeline {
 //             }
 //         }
         stage('Deploy to Kubernetes') {
-        steps {
-            withCredentials([file(credentialsId: 'kubeconfig-master', variable: 'KUBECONFIG')]) {
-            sh 'kubectl apply -f db/manifests/'
-            sh 'kubectl apply -f db/database-seed.yaml'
-            sh 'kubectl apply -f api/manifests/'
-            sh 'kubectl apply -f web/manifests/'
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig-master', variable: 'KUBECONFIG')]) {
+                    script {
+                        // Apply DB manifests first
+                        sh 'kubectl apply -f db/manifests/'
+                        sh 'kubectl apply -f db/database-seed.yaml'
+
+                        // Apply API manifests and restart deployment to pick up new image
+                        sh 'kubectl apply -f api/manifests/'
+                        sh 'kubectl rollout restart deployment api'
+
+                        // Apply Web manifests and restart deployment to pick up new image
+                        sh 'kubectl apply -f web/manifests/'
+                        sh 'kubectl rollout restart deployment web'
+                    }
+                }
             }
-        }
         }
     }
 
