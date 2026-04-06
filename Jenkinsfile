@@ -46,15 +46,11 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([string(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_CONTENT')]) {
+                withCredentials([file(credentialsId: 'k3s-config', variable: 'KUBECONFIG')]) {
                     sh '''
-                    echo "$KUBECONFIG_CONTENT" > kubeconfig
-                    export KUBECONFIG=$(pwd)/kubeconfig
-
                     kubectl apply -f db/manifests/
                     kubectl apply -f api/manifests/
                     kubectl apply -f web/manifests/
-
                     kubectl rollout restart deployment api
                     kubectl rollout restart deployment web
                     '''
