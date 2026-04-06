@@ -23,7 +23,7 @@
         <span>{{optionB.name}}</span>
       </button>
 
-      <h3>How does it work? Only God Knows</h3>
+      <h5>How does it work? Only God Knows</h5>
 
       <p>
         When you click one of the above buttons, a vote is submitted to the <em>api</em> service,
