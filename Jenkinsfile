@@ -62,4 +62,37 @@ pipeline {
             }
         }
     }
+
+    post {
+
+        success {
+            emailext(
+                to: 'official.hammadansari@gmail.com',
+                subject: "✅ SUCCESS: ${env.JOB_NAME} Build #${env.BUILD_NUMBER}",
+                body: """
+                Build Successful!
+
+                Job: ${env.JOB_NAME}
+                Build Number: ${env.BUILD_NUMBER}
+                URL: ${env.BUILD_URL}
+                """
+            )
+        }
+
+        failure {
+            emailext(
+                to: 'official.hammadansari@gmail.com',
+                subject: "❌ FAILURE: ${env.JOB_NAME} Build #${env.BUILD_NUMBER}",
+                body: """
+                Build Failed!
+
+                Job: ${env.JOB_NAME}
+                Build Number: ${env.BUILD_NUMBER}
+                URL: ${env.BUILD_URL}
+
+                Please check logs.
+                """
+            )
+        }
+    }
 }
