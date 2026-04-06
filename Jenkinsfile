@@ -11,7 +11,7 @@ pipeline {
     }
 
     triggers {
-        pollSCM('H/5 * * * *')  // Poll every 5 minutes
+        pollSCM('H/5 * * * *')
     }
 
     stages {
@@ -53,6 +53,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'k3s-config', variable: 'KUBECONFIG')]) {
                     sh '''
                     kubectl apply -f db/manifests/
+                    kubectl apply -f db/database-seed.yaml
                     kubectl apply -f api/manifests/
                     kubectl apply -f web/manifests/
                     kubectl rollout restart deployment api
@@ -64,36 +65,41 @@ pipeline {
     }
 
     post {
-        success {
-            emailext(
-                to: 'official.hammadansari@gmail.com',
-                subject: "✅ SUCCESS: ${env.JOB_NAME} Build #${env.BUILD_NUMBER}",
-                body: """
-Build Successful!
+
+        always {
+            script {
+                def status = currentBuild.currentResult
+
+                def subject = "${status}: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
+                def body = """
+Build Status: ${status}
 
 Job: ${env.JOB_NAME}
 Build Number: ${env.BUILD_NUMBER}
-URL: ${env.BUILD_URL}
-""",
-                mimeType: 'text/plain'
-            )
-        }
+Build URL: ${env.BUILD_URL}
+"""
 
-        failure {
-            emailext(
-                to: 'official.hammadansari@gmail.com',
-                subject: "❌ FAILURE: ${env.JOB_NAME} Build #${env.BUILD_NUMBER}",
-                body: """
-Build Failed!
+                echo "Sending email notification..."
 
-Job: ${env.JOB_NAME}
-Build Number: ${env.BUILD_NUMBER}
-URL: ${env.BUILD_URL}
+                // Primary (Email Extension Plugin)
+                try {
+                    emailext(
+                        to: 'official.hammadansari@gmail.com',
+                        subject: subject,
+                        body: body,
+                        mimeType: 'text/plain'
+                    )
+                } catch (err) {
+                    echo "emailext failed, falling back to basic mail: ${err}"
 
-Please check logs.
-""",
-                mimeType: 'text/plain'
-            )
+                    // Fallback (basic mail step)
+                    mail(
+                        to: 'official.hammadansari@gmail.com',
+                        subject: subject,
+                        body: body
+                    )
+                }
+            }
         }
     }
 }
