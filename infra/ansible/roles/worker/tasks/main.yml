@@ -1,24 +1,25 @@
 ---
-- name: Wait for master node token
+- name: Wait for master node to generate token
   wait_for:
     path: /var/lib/rancher/k3s/server/node-token
-    host: "{{ hostvars[groups['k8s_master'][0]].ansible_default_ipv4.address }}"
+    host: "{{ hostvars[groups['k8s_master'][0]].ansible_host | default(groups['k8s_master'][0]) }}"
     timeout: 300
 
 - name: Get k3s join token from master
-  command: cat /var/lib/rancher/k3s/server/node-token
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
   delegate_to: "{{ groups['k8s_master'][0] }}"
-  run_once: true
-  register: k3s_token
+  register: master_token_raw
 
-- name: Set k3s join token fact on all workers
+- name: Set k3s join token fact on worker
   set_fact:
-    k3s_join_token: "{{ k3s_token.stdout }}"
+    k3s_join_token: "{{ master_token_raw.content | b64decode | trim }}"
 
-- name: Join k3s cluster as agent
+- name: Install k3s agent and join cluster
   shell: |
     curl -sfL https://get.k3s.io | \
     K3S_URL=https://{{ hostvars[groups['k8s_master'][0]].ansible_default_ipv4.address }}:6443 \
-    K3S_TOKEN={{ k3s_join_token }} sh -
+    K3S_TOKEN={{ k3s_join_token }} \
+    INSTALL_K3S_VERSION="v1.28.1+k3s1" sh -
   args:
     creates: /etc/rancher/k3s/k3s-agent.env

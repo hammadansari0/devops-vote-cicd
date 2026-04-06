@@ -80,8 +80,8 @@ spec:
     spec:
       containers:
       - name: api
-        image: api:dev   # ✅ FIXED
-        imagePullPolicy: IfNotPresent
+        image: yourusername/devops-api:latest
+        imagePullPolicy: Always
         args:
         - python
         - app.py

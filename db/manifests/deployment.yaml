@@ -14,6 +14,31 @@ spec:
       labels:
         app: postgres
     spec:
+      initContainers:
+        - name: db-seed
+          image: postgres:12.4-alpine
+          command:
+            - /bin/sh
+            - -c
+            - |
+              until pg_isready -h postgres -p 5432 -U postgres; do
+                echo "Waiting for postgres..."
+                sleep 2
+              done
+
+              psql -w \
+                --host=postgres \
+                --port=5432 \
+                -d $PGDATABASE \
+                -c "CREATE TABLE IF NOT EXISTS votes (id VARCHAR(255) NOT NULL UNIQUE, vote VARCHAR(255) NOT NULL, created_at timestamp default NULL)"
+          env:
+            - name: PGDATABASE
+              value: postgres
+            - name: PGUSER
+              value: postgres
+            - name: PGPASSWORD
+              value: postgres
+
       containers:
         - name: postgres
           image: postgres:12.4
@@ -24,8 +49,10 @@ spec:
               value: "postgres"
             - name: POSTGRES_DB
               value: "postgres"
+
           readinessProbe:
             exec:
               command: ["pg_isready", "-U", "postgres"]
             initialDelaySeconds: 10
             periodSeconds: 5
+            successThreshold: 3

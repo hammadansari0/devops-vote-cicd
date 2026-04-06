@@ -72,8 +72,8 @@ spec:
     spec:
       containers:
       - name: web
-        image: web:dev   # ✅ same pattern as api
-        imagePullPolicy: IfNotPresent
+        image: yourusername/devops-web:latest   # ✅ same pattern as api
+        imagePullPolicy: Always
         env:
         - name: VUE_APP_API_URL
           value: http://api   # ✅ connect to API service
