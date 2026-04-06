@@ -14,7 +14,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/hammadansari0/devops-vote-cicd'
+                git branch: 'main', url: 'https://github.com/hammadansari0/devops-vote-cicd'
             }
         }
 
