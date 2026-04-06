@@ -14,15 +14,10 @@
     path: /home/ubuntu/.calico_installed
     state: touch
 
-- name: Save join token for workers
-  shell: k3s token create
-  register: k3s_token
-  changed_when: false
+- name: Initialize k3s master
+  debug:
+    msg: "k3s master installed and running."
 
-- name: Set k3s join token fact
-  set_fact:
-    k3s_join_token: "{{ k3s_token.stdout }}"
-    
 - name: Get k3s node token
   shell: cat /var/lib/rancher/k3s/server/node-token
   register: node_token

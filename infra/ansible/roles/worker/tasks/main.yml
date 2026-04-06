@@ -1,3 +1,10 @@
+- name: Wait for master token
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+    timeout: 120
+  delegate_to: "{{ groups['k8s_master'][0] }}"
+  run_once: true
+
 - name: Join k3s cluster
   shell: |
     curl -sfL https://get.k3s.io | \
