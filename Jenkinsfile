@@ -48,19 +48,29 @@ pipeline {
             }
         }
 
+//         stage('Deploy to Kubernetes') {
+//             steps {
+//                 withCredentials([file(credentialsId: 'k3s-config', variable: 'KUBECONFIG')]) {
+//                     sh '''
+// kubectl --insecure-skip-tls-verify=true apply -f db/manifests/
+// kubectl --insecure-skip-tls-verify=true apply -f db/database-seed.yaml
+// kubectl --insecure-skip-tls-verify=true apply -f api/manifests/
+// kubectl --insecure-skip-tls-verify=true apply -f web/manifests/
+// kubectl --insecure-skip-tls-verify=true rollout restart deployment api
+// kubectl --insecure-skip-tls-verify=true rollout restart deployment web
+// '''
+//                 }
+//             }
+//         }
         stage('Deploy to Kubernetes') {
-            steps {
-                withCredentials([file(credentialsId: 'k3s-config', variable: 'KUBECONFIG')]) {
-                    sh '''
-kubectl --insecure-skip-tls-verify=true apply -f db/manifests/
-kubectl --insecure-skip-tls-verify=true apply -f db/database-seed.yaml
-kubectl --insecure-skip-tls-verify=true apply -f api/manifests/
-kubectl --insecure-skip-tls-verify=true apply -f web/manifests/
-kubectl --insecure-skip-tls-verify=true rollout restart deployment api
-kubectl --insecure-skip-tls-verify=true rollout restart deployment web
-'''
-                }
+        steps {
+            withCredentials([file(credentialsId: 'kubeconfig-master', variable: 'KUBECONFIG')]) {
+            sh 'kubectl apply -f db/manifests/'
+            sh 'kubectl apply -f db/database-seed.yaml'
+            sh 'kubectl apply -f api/manifests/'
+            sh 'kubectl apply -f web/manifests/'
             }
+        }
         }
     }
 
