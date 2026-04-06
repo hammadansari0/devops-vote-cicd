@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+  <div> Real CICD works</div>
     <div>
       <h3>{{optionA.name}} <span>vs.</span> {{optionB.name}}</h3>
 
