@@ -1,6 +1,5 @@
 <template>
   <div class="hello">
-  <div> Real CICD works</div>
     <div>
       <h3>{{optionA.name}} <span>vs.</span> {{optionB.name}}</h3>
 
@@ -23,6 +22,8 @@
       >
         <span>{{optionB.name}}</span>
       </button>
+
+      <h3>How does it work? Only God Knows</h3>
 
       <p>
         When you click one of the above buttons, a vote is submitted to the <em>api</em> service,
