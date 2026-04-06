@@ -65,40 +65,21 @@ pipeline {
     }
 
     post {
-
         always {
             script {
                 def status = currentBuild.currentResult
 
-                def subject = "${status}: ${env.JOB_NAME} #${env.BUILD_NUMBER}"
-                def body = """
-Build Status: ${status}
+                mail(
+                    to: 'official.hammadansari@gmail.com',
+                    subject: "${status}: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                    body: """
+    Build Status: ${status}
 
-Job: ${env.JOB_NAME}
-Build Number: ${env.BUILD_NUMBER}
-Build URL: ${env.BUILD_URL}
-"""
-
-                echo "Sending email notification..."
-
-                // Primary (Email Extension Plugin)
-                try {
-                    emailext(
-                        to: 'official.hammadansari@gmail.com',
-                        subject: subject,
-                        body: body,
-                        mimeType: 'text/plain'
-                    )
-                } catch (err) {
-                    echo "emailext failed, falling back to basic mail: ${err}"
-
-                    // Fallback (basic mail step)
-                    mail(
-                        to: 'official.hammadansari@gmail.com',
-                        subject: subject,
-                        body: body
-                    )
-                }
+    Job: ${env.JOB_NAME}
+    Build Number: ${env.BUILD_NUMBER}
+    URL: ${env.BUILD_URL}
+    """
+                )
             }
         }
     }
