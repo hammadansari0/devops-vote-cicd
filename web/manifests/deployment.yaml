@@ -72,7 +72,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: yourusername/devops-web:latest   # ✅ same pattern as api
+        image: hammadansari/devops-web:latest   # ✅ same pattern as api
         imagePullPolicy: Always
         env:
         - name: VUE_APP_API_URL

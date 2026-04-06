@@ -80,7 +80,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: yourusername/devops-api:latest
+        image: hammadansari/devops-api:latest
         imagePullPolicy: Always
         args:
         - python
