@@ -4,18 +4,32 @@
     state: present
     update_cache: yes
 
-- name: Add Jenkins key
-  shell: wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
+- name: Create keyrings directory
+  file:
+    path: /usr/share/keyrings
+    state: directory
+    mode: '0755'
 
-- name: Add Jenkins repo
-  copy:
-    dest: /etc/apt/sources.list.d/jenkins.list
-    content: "deb https://pkg.jenkins.io/debian-stable binary/"
+- name: Add Jenkins GPG key
+  get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+    dest: /usr/share/keyrings/jenkins-keyring.asc
+    mode: '0644'
+
+- name: Add Jenkins repository
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/"
+    state: present
+    filename: jenkins
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
 
 - name: Install Jenkins
   apt:
     name: jenkins
-    update_cache: yes
+    state: present
 
 - name: Start Jenkins
   service:
@@ -23,7 +37,14 @@
     state: started
     enabled: true
 
-# 🔥 Allow Jenkins to use kubectl (k3s)
+- name: Create Jenkins .kube directory
+  file:
+    path: /var/lib/jenkins/.kube
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: '0755'
+
 - name: Copy k3s kubeconfig to Jenkins
   copy:
     src: /etc/rancher/k3s/k3s.yaml
