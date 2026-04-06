@@ -1,13 +1,19 @@
+---
 - name: Wait for master node token
   wait_for:
     path: /var/lib/rancher/k3s/server/node-token
-    host: "{{ hostvars[groups['k8s_master'][0]].inventory_hostname }}"
+    host: "{{ hostvars[groups['k8s_master'][0]].ansible_default_ipv4.address }}"
     timeout: 300
 
-- name: Set k3s join token fact
-  set_fact:
-    k3s_join_token: "{{ lookup('file', '/var/lib/rancher/k3s/server/node-token') }}"
+- name: Get k3s join token from master
+  command: cat /var/lib/rancher/k3s/server/node-token
   delegate_to: "{{ groups['k8s_master'][0] }}"
+  run_once: true
+  register: k3s_token
+
+- name: Set k3s join token fact on all workers
+  set_fact:
+    k3s_join_token: "{{ k3s_token.stdout }}"
 
 - name: Join k3s cluster as agent
   shell: |
