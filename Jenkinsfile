@@ -52,13 +52,13 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'k3s-config', variable: 'KUBECONFIG')]) {
                     sh '''
-                    kubectl apply -f db/manifests/
-                    kubectl apply -f db/database-seed.yaml
-                    kubectl apply -f api/manifests/
-                    kubectl apply -f web/manifests/
-                    kubectl rollout restart deployment api
-                    kubectl rollout restart deployment web
-                    '''
+kubectl --insecure-skip-tls-verify=true apply -f db/manifests/
+kubectl --insecure-skip-tls-verify=true apply -f db/database-seed.yaml
+kubectl --insecure-skip-tls-verify=true apply -f api/manifests/
+kubectl --insecure-skip-tls-verify=true apply -f web/manifests/
+kubectl rollout restart deployment api
+kubectl rollout restart deployment web
+'''
                 }
             }
         }
