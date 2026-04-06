@@ -24,3 +24,4 @@
 
 - name: Disable swap (required for Kubernetes)
   command: swapoff -a
+  ignore_errors: yes
