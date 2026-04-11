@@ -3,8 +3,10 @@ kind: Job
 metadata:
   name: db-seed
 spec:
+  backoffLimit: 5
   template:
     spec:
+      restartPolicy: Never
       containers:
       - name: db-seed
         image: postgres:12.4
@@ -12,13 +14,19 @@ spec:
         - /bin/sh
         - -c
         - |
+          echo "Waiting for postgres..."
           until pg_isready -h postgres -U postgres; do
-            echo "Waiting for postgres..."
             sleep 2
           done
-          psql -h postgres -U postgres -d postgres \
-          -c "CREATE TABLE IF NOT EXISTS votes (id VARCHAR(255) NOT NULL UNIQUE, vote VARCHAR(255) NOT NULL, created_at timestamp default NULL);"
+
+          echo "Creating table..."
+          psql -h postgres -U postgres -d postgres -c "
+          CREATE TABLE IF NOT EXISTS votes (
+            id VARCHAR(255) PRIMARY KEY,
+            vote VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+          "
         env:
         - name: PGPASSWORD
           value: "postgres"
-      restartPolicy: Never

@@ -19,8 +19,13 @@ spec:
         image: hammadansari/devops-api:latest
         imagePullPolicy: Always
         args:
-        - python
-        - app.py
+        - |
+          echo "Waiting for Postgres..."
+          until pg_isready -h postgres -U postgres; do
+          sleep 2
+          done
+          echo "Starting API..."
+          python app.py
         env:
         - name: PGDATABASE
           value: postgres
