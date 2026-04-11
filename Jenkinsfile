@@ -69,7 +69,7 @@ pipeline {
                         // Apply DB manifests first
                         sh 'kubectl apply -f db/manifests/'
                         sh 'kubectl apply -f db/database-seed.yaml'
-
+                        sh 'kubectl wait --for=condition=complete job/db-seed --timeout=120s'
                         // Apply API manifests and restart deployment to pick up new image
                         sh 'kubectl apply -f api/manifests/'
                         sh 'kubectl rollout restart deployment api'
