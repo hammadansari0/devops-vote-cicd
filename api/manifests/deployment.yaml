@@ -21,10 +21,6 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
         - |
-          echo "Waiting for Postgres..."
-          until pg_isready -h postgres -U postgres; do
-          sleep 2
-          done
           echo "Starting API..."
           python app.py
         env:
