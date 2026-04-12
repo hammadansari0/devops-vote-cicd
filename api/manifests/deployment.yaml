@@ -18,6 +18,7 @@ spec:
       - name: api
         image: hammadansari/devops-api:latest
         imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
         args:
         - |
           echo "Waiting for Postgres..."
