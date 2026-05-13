@@ -1,51 +1,411 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github-production-user-asset-6210df.s3.amazonaws.com/658727/272340510-34957be5-7318-4473-8141-2751ca571c4f.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://github-production-user-asset-6210df.s3.amazonaws.com/658727/272340472-ad8d7a46-ef85-47ea-9129-d815206ed2f6.png">
-    <img alt="Garden" src="https://github-production-user-asset-6210df.s3.amazonaws.com/658727/272340472-ad8d7a46-ef85-47ea-9129-d815206ed2f6.png">
-  </picture>
-</p>
-<div align="center">
-  <a href="https://garden.io/?utm_source=github-web-app-example">Website</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://docs.garden.io/?utm_source=github-web-app-example">Docs</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://github.com/garden-io/garden/tree/0.13.21/examples">Examples</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://garden.io/blog/?utm_source=github-web-app-example">Blog</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://go.garden.io/discord">Discord</a>
-</div>
+# 🚀 Three-Tier Web Application
 
-## Welcome to Garden's Three Tier Web App Example 👋
+A complete three-tier web application built using modern DevOps practices and containerized infrastructure.
 
-This repository contains the three tier web app that's used in the ['Your First Project' tutorial](https://docs.garden.io/tutorials/your-first-project) from our documentation.
+This project demonstrates:
 
-- If you're coming from the tutorial, checkout out to the [`tutorial-start`](https://github.com/garden-io/web-app-example/tree/tutorial-start) branch to follow along.
-- If you're coming from the tutorial but can't wait to see the end result, checkout out to the [`tutorial-complete`](https://github.com/garden-io/web-app-example/tree/tutorial-complete) branch.
+- Frontend deployment
+- Backend/API deployment
+- Database deployment
+- Docker containerization
+- Kubernetes orchestration
+- Jenkins CI/CD automation
 
-If you see any issues or bugs, kindly report them to the [main Garden repo](https://github.com/garden-io/garden/issues/new).
+---
 
-## About the project
+# 📌 Project Overview
 
-The project is a simplified version of the microservice voting application you'll find in various Garden examples. Garden is typically used in projects that have multiple microservices but
-sometimes its better to keep things simple and here we have a three-tier web app version with API, web and database components.
+The application is structured into multiple services:
 
-### Garden Providers
+| Service | Description |
+|----------|-------------|
+| `web` | Frontend application |
+| `api` | Backend API service |
+| `db` | PostgreSQL database |
 
-The `main` branch uses the `local-kubernetes` provider. The [tutorial from our documentation](https://docs.garden.io/tutorials/your-first-project) however goes into more detail and discusses the different options for deploying the project to Kubernetes.
+The project is designed to run inside Kubernetes and can be automatically deployed using Jenkins pipelines.
 
-### Garden Actions
+---
 
-The project is a voting application with the following components:
+# ⚙️ Tech Stack
 
-- `web` — A frontend Vue application
-- `api` — A Python API server
-- `db` — A Postgres database
+## Frontend
+- React / Vue
+- Vite
 
-These services are built, deployed, and tested with [Garden actions](https://docs.garden.io/overview/core-concepts#action).
+## Backend
+- Node.js / Python API
 
-Specifically, the `api` and `web` components have their own Kubernetes manifests so we use the `container` Build action to build them
-and the `kubernetes` Deploy action to deploy them.
+## Database
+- PostgreSQL
 
-The `db` component is an "off the shelf" Postgres Helm chart that's deployed via the `helm` Deploy action.
+## DevOps & Infrastructure
+- Docker
+- Kubernetes
+- Jenkins
+- GitHub
+
+---
+
+# 📂 Project Structure
+
+```bash
+.
+├── api/
+│   ├── manifests/
+│   ├── Dockerfile
+│   ├── app.py
+│   ├── requirements.txt
+│   └── test.py
+│
+├── db/
+│   ├── manifests/
+│   ├── README.md
+│   ├── database-seed.yaml
+│   └── garden.yml
+│
+├── infra/
+│
+├── web/
+│   ├── manifests/
+│   ├── public/
+│   ├── src/
+│   ├── tests/
+│   ├── .browserslistrc
+│   ├── .dockerignore
+│   └── .editorconfig
+│
+├── Jenkinsfile
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+# 🚀 Getting Started
+
+## 📋 Prerequisites
+
+Before running the project, ensure the following tools are installed on your Linux machine:
+
+- Docker
+- Kubernetes (Minikube / K3s / Kind / kubeadm)
+- kubectl
+- Jenkins
+- Git
+- Node.js
+- npm
+
+---
+
+# 🔧 Clone Repository
+
+```bash
+git clone https://github.com/your-username/your-repository.git
+cd your-repository
+```
+
+---
+
+# 🐳 Docker Setup
+
+## Build Docker Images
+
+```bash
+docker-compose build
+```
+
+## Start Containers
+
+```bash
+docker-compose up -d
+```
+
+## Verify Running Containers
+
+```bash
+docker ps
+```
+
+---
+
+# ☸️ Kubernetes Deployment
+
+## Deploy Application Services
+
+Apply application manifests:
+
+```bash
+kubectl apply -f app/
+```
+
+## Deploy Database
+
+```bash
+kubectl apply -f db/manifests/
+```
+
+---
+
+# 🔍 Verify Kubernetes Resources
+
+## Check Pods
+
+```bash
+kubectl get pods
+```
+
+## Check Services
+
+```bash
+kubectl get svc
+```
+
+## Check Ingress
+
+```bash
+kubectl get ingress
+```
+
+---
+
+# 🌐 Access Application
+
+If using Minikube:
+
+```bash
+minikube service <service-name>
+```
+
+Or access through configured ingress hostname/IP.
+
+---
+
+# 🔄 CI/CD Pipeline Setup
+
+This project supports automated CI/CD deployment using Jenkins.
+
+---
+
+# ✅ Requirements for CI/CD Pipeline
+
+To run the CI/CD pipeline successfully, you need:
+
+- Docker installed
+- Kubernetes cluster configured
+- Jenkins installed on Linux machine
+- kubectl configured inside Jenkins server
+
+---
+
+# ⚙️ Jenkins Setup
+
+## Step 1: Install Jenkins
+
+Install Jenkins on your Linux machine.
+
+Start Jenkins service:
+
+```bash
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+```
+
+Check Jenkins status:
+
+```bash
+sudo systemctl status jenkins
+```
+
+---
+
+# 🔌 Install Required Jenkins Plugins
+
+Install the following plugins from Jenkins Plugin Manager:
+
+- Git Plugin
+- Docker Plugin
+- Kubernetes Plugin
+- Pipeline Plugin
+
+---
+
+# 🔗 Connect GitHub Repository to Jenkins
+
+## Create Jenkins Pipeline Job
+
+1. Open Jenkins Dashboard
+2. Click **New Item**
+3. Select **Pipeline**
+4. Enter project name
+5. Click **OK**
+
+---
+
+## Configure GitHub Repository
+
+Under Pipeline section:
+
+- Select:
+  ```text
+  Pipeline script from SCM
+  ```
+
+- SCM:
+  ```text
+  Git
+  ```
+
+- Add your GitHub repository URL.
+
+Example:
+
+```bash
+https://github.com/your-username/your-repository.git
+```
+
+---
+
+# 🚀 CI/CD Workflow
+
+After setup, the pipeline automatically performs:
+
+```text
+GitHub Push
+    ↓
+Jenkins Trigger
+    ↓
+Pull Latest Code
+    ↓
+Run Tests
+    ↓
+Build Docker Images
+    ↓
+Deploy to Kubernetes
+```
+
+---
+
+# 🧪 Run Tests
+
+## Frontend Tests
+
+```bash
+cd app/web
+npm install
+npm run test
+```
+
+## Backend Tests
+
+```bash
+cd app/api
+npm install
+npm run test
+```
+
+---
+
+# 🏗 Build Frontend
+
+```bash
+cd app/web
+npm run build
+```
+
+---
+
+# 🐳 Build Docker Images Manually
+
+## Frontend
+
+```bash
+docker build -t web-app ./app/web
+```
+
+## Backend
+
+```bash
+docker build -t api-app ./app/api
+```
+
+---
+
+# 📦 Kubernetes Commands
+
+## Restart Deployment
+
+```bash
+kubectl rollout restart deployment <deployment-name>
+```
+
+## Check Logs
+
+```bash
+kubectl logs <pod-name>
+```
+
+## Delete Resources
+
+```bash
+kubectl delete -f app/
+kubectl delete -f db/manifests/
+```
+
+---
+
+# 📬 Deployment Notifications
+
+The CI/CD pipeline can be configured to send notifications for:
+
+- Successful builds
+- Failed builds
+- Deployment URLs
+- Pipeline execution logs
+
+Supported notification channels:
+
+- Email
+- Slack
+- Discord
+- Telegram
+
+---
+
+# 🔐 Environment Variables
+
+Create a `.env` file for environment-specific configuration.
+
+Example:
+
+```env
+DB_HOST=postgres-service
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=password
+API_PORT=5000
+```
+
+---
+
+# 📈 Future Improvements
+
+- Helm chart support
+- GitHub Actions integration
+- Monitoring with Prometheus & Grafana
+- Multi-environment deployment
+- Auto-scaling with HPA
+- GitOps workflow
+
+---
+
+# 🤝 Contributing
+
+Contributions, feature requests, and improvements are welcome.
+
+
+---
+
+# 👨‍💻 Author
+
+Developed and maintained by Hammad Ansari
