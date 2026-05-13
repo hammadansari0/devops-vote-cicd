@@ -101,8 +101,8 @@ Before running the project, ensure the following tools are installed on your Lin
 # 🔧 Clone Repository
 
 ```bash
-git clone https://github.com/your-username/your-repository.git
-cd your-repository
+git clone https://github.com/hammadansari0/devops-vote-cicd.git
+cd devops-vote-cicd
 ```
 
 ---
@@ -261,7 +261,7 @@ Under Pipeline section:
 Example:
 
 ```bash
-https://github.com/your-username/your-repository.git
+https://github.com/hammadansari0/devops-vote-cicd.git
 ```
 
 ---
